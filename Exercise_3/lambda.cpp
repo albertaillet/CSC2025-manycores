@@ -16,7 +16,7 @@ int main() {
   std::cout << counter << "\n";
 
   std::thread incrementlambda(
-    [&counter](const unsigned int times) {for (unsigned int i = 0; i < times; ++i) { ++counter; } }, 
+    [&counter](const unsigned int times) -> void {for (unsigned int i = 0; i < times; ++i) { ++counter; } }, 
       100000);
   incrementlambda.join();
   std::cout << counter << "\n";
