@@ -4,10 +4,12 @@ example1.cpp
 */
 #include <iostream>
 #include <thread>
+#include <atomic>
 
 int main() {
-  int counter{0};
-  auto inc = [counter](const unsigned int nTime) mutable {
+  std::atomic<int> counter{0};
+
+  auto inc = [&counter](const unsigned int nTime) mutable {
     for (unsigned int i = 0; i < nTime; ++i) {
       ++counter;
     }
