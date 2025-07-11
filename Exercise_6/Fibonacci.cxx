@@ -116,10 +116,10 @@ int main(int argc, char* argv[]) {
       // this algorithm cannot work with a parallel scan.
       while (output.size() < N) {
         const auto size = output.size();
-        output.push_back(0); // Fill in the correct number
+        output.push_back(output[size-1] + output[size-2]);
       }
     });
-    print(fibo);
+    // print(fibo);
 
     // Task 4.(b): Test the matrix algorithm.
     // Let's repeatedly apply the matrix, and print a few steps.
@@ -135,10 +135,10 @@ int main(int argc, char* argv[]) {
     // [[5 3]
     //  [3 2]]
     //  ...
-    FiboMatrix fm;
-    std::cout << "-------------------------------------\nThe Fibonacci matrices:\n";
-    std::cout << fm;
-    std::cout << fm * fm;
+    // FiboMatrix fm;
+    // std::cout << "-------------------------------------\nThe Fibonacci matrices:\n";
+    // std::cout << fm;
+    // std::cout << fm * fm;
     // ...
 
 
@@ -159,26 +159,31 @@ int main(int argc, char* argv[]) {
     //
     // - What is the difference between inclusive and exclusive scan?
     // - Why is this algorithm slower than the trivial sequence from task 1?
-/*
-    benchmark("Sequential matrix algorithm", fiboInputs, fiboResults, [](auto const & input, auto & output){
-        std::inclusive_scan(<input begin>, <input end>,
-                            <output>, <operator>);
-        // or
-        std::exclusive_scan(..., ...,
-                            ..., FiboMatrix{1,0,0,1}, <operator>);
+
+    benchmark("Sequential matrix algorithm inclusive", fiboInputs, fiboResults, [](auto const & input, auto & output){
+        // Inclusive scan is slower than the non-matrix implementation, since we do more opertaions.
+        std::inclusive_scan(input.begin(), input.end(), output.begin(), std::multiplies<FiboMatrix>{});
     });
-    print(fiboResults);
-*/
+    // print(fiboResults);
+
+    benchmark("Sequential matrix algorithm exclusive", fiboInputs, fiboResults, [](auto const & input, auto & output){
+        // The difference with the exclusive scan is the inclusion of the input or not.
+        std::exclusive_scan(input.begin(), input.end(), output.begin(), FiboMatrix{1,0,0,1}, std::multiplies<FiboMatrix>{});
+    });
+    // print(fiboResults);
 
     // Task 6: C++ can parallelise many standard algorithms when an additional execution parameter is passed.
     // Try invoking the scan algorithm from above, but pass "std::execution::par_unseq" as first argument.
     // How large is the speedup compared to the sequential algorithm?
-/*
-    benchmark("Parallel matrix algorithm (C++)", fiboInputs, fiboResults, [&](auto const & input, auto & output){
-        Use parallel version of above ...
+
+    benchmark("Parallel matrix algorithm (C++) inclusive", fiboInputs, fiboResults, [&](auto const & input, auto & output){
+        std::inclusive_scan(std::execution::par_unseq, input.begin(), input.end(), output.begin(),  std::multiplies<FiboMatrix>{});
     });
-    print(fiboResults);
-*/
+
+    benchmark("Parallel matrix algorithm (C++) exclusive", fiboInputs, fiboResults, [&](auto const & input, auto & output){
+        std::exclusive_scan(std::execution::par_unseq, input.begin(), input.end(), output.begin(), FiboMatrix{1,0,0,1},  std::multiplies<FiboMatrix>{});
+    });
+    // print(fiboResults);
 
     // Task 7: Let's repeat the parallelisation of scan using TBB. With TBB, you get full control over partitioning,
     // input, output, and the number of threads. In fact, the parallel C++ execution above might be implemented
