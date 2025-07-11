@@ -250,3 +250,42 @@ index 9732241..8745449 100644
 +    #1 void std::__invoke_impl<void, void (*)(int*, unsigned int), int*, int>(std::__invoke_other, void (*&&)(int*, unsigned int), int*&&, int&&) /cvmfs/sft.cern.ch/lcg/releases/gcc/13.1.0-b3d18/x86_64-el9/i
 ```
 
+```sh
+[alsundai@lxplus922 Exercise_5]$ valgrind --tool=helgrind ./example2
+==1453364== Helgrind, a thread error detector
+==1453364== Copyright (C) 2007-2024, and GNU GPL'd, by OpenWorks LLP et al.
+==1453364== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==1453364== Command: ./example2
+==1453364==
+==1453364== ---Thread-Announcement------------------------------------------
+==1453364==
+==1453364== Thread #3 was created
+==1453364==    at 0x4CAE4F3: clone (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4CAF2AE: __clone_internal (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4C29D84: create_thread (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4C2A8C6: pthread_create@@GLIBC_2.34 (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4853456: pthread_create_WRK (hg_intercepts.c:445)
+==1453364==    by 0x4854D62: pthread_create@* (hg_intercepts.c:478)
+==1453364==    by 0x495DBA8: std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) (in /usr/lib64/libstdc++.so.6.0.29)
+==1453364==    by 0x4014DC: std::thread::thread<void (&)(int*, unsigned int), int*, int, void>(void (&)(int*, unsigned int), int*&&, int&&) (std_thread.h:143)
+==1453364==    by 0x4012AB: main (example2.cpp:24)
+==1453364==
+==1453364== ---Thread-Announcement------------------------------------------
+==1453364==
+==1453364== Thread #2 was created
+==1453364==    at 0x4CAE4F3: clone (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4CAF2AE: __clone_internal (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4C29D84: create_thread (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4C2A8C6: pthread_create@@GLIBC_2.34 (in /usr/lib64/libc.so.6)
+==1453364==    by 0x4853456: pthread_create_WRK (hg_intercepts.c:445)
+==1453364==    by 0x4854D62: pthread_create@* (hg_intercepts.c:478)
+==1453364==    by 0x495DBA8: std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) (in /usr/lib64/libstdc++.so.6.0.29)
+==1453364==    by 0x4014DC: std::thread::thread<void (&)(int*, unsigned int), int*, int, void>(void (&)(int*, unsigned int), int*&&, int&&) (std_thread.h:143)
+==1453364==    by 0x401283: main (example2.cpp:23)
+==1453364==
+==1453364== ----------------------------------------------------------------
+==1453364==
+==1453364== Possible data race during read of size 4 at 0x1FFEFFF72C by thread #3
+==1453364== Locks held: none
+==1453364==    at 0x401231: anotherIncrementCounter(int*, unsigned int) (example2.cpp:16)
+```
