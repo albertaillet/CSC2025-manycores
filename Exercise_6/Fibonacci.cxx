@@ -61,8 +61,8 @@ void print(Container & output) {
 class FiboMatrix {
     using Int_t = uint64_t;
     // Task 3: Fill in the matrix that computes the two next Fibonacci numbers:
-    Int_t matrix[2][2] = {{0,0},
-                          {0,0}};
+    Int_t matrix[2][2] = {{1,1},
+                          {1,0}};
 
   public:
     FiboMatrix() = default;
